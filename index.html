@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Task and project manager built with object-oriented vanilla JavaScript.">
+    <meta name="author" content="Touseef Ahmed">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="js/app.js"></script>
+    <title>Task and Project Manager | Bloomrix</title>
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <h1>Task and Project Manager</h1>
+        <p>A small project management app written with object-oriented JavaScript. All projects, people and tasks are sample data, and nothing is saved when you reload the page.</p>
+        <p>Acting as <strong id="current-user"></strong>. Comments and activity are recorded under this name.</p>
+    </header>
+
+    <p class="alert" id="app-error" role="alert" hidden></p>
+
+    <main class="app" id="main-content" tabindex="-1">
+
+        <section class="panel" aria-labelledby="summary-title">
+            <h2 id="summary-title">Summary: <span id="summary-scope">All projects</span></h2>
+            <div class="stat-grid" id="summary-grid"></div>
+            <p class="hint">The summary covers the project chosen in the filters. The other filters do not change it.</p>
+        </section>
+
+        <div class="workspace">
+
+            <section class="panel projects" aria-labelledby="projects-title">
+                <h2 id="projects-title">Projects</h2>
+                <div class="project-grid" id="project-list"></div>
+            </section>
+
+            <section class="panel board" aria-labelledby="board-title">
+                <div class="board__header">
+                    <h2 id="board-title">Tasks</h2>
+                    <button class="btn" type="button" id="new-task-button">New task</button>
+                </div>
+
+                <form class="filters" id="filter-form" role="search">
+                    <div class="field">
+                        <label for="search-input">Search tasks</label>
+                        <input type="search" id="search-input" name="q" placeholder="Title, description or project" autocomplete="off">
+                    </div>
+
+                    <div class="field">
+                        <label for="status-select">Status</label>
+                        <select id="status-select" name="status"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="priority-select">Priority</label>
+                        <select id="priority-select" name="priority"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="project-select">Project</label>
+                        <select id="project-select" name="project"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="assignee-select">Assigned to</label>
+                        <select id="assignee-select" name="assignee"></select>
+                    </div>
+
+                    <div class="field">
+                        <label for="sort-select">Sort by</label>
+                        <select id="sort-select" name="sort"></select>
+                    </div>
+
+                    <div class="button-row">
+                        <button class="btn btn--secondary" type="button" id="clear-filters">Clear filters</button>
+                    </div>
+                </form>
+
+                <p class="result-count" id="result-count" role="status"></p>
+
+                <p class="empty" id="empty-state" hidden>
+                    No tasks to show. Clear the filters or add a new task.
+                    <button class="btn btn--small btn--secondary" type="button" id="empty-clear">Clear filters</button>
+                </p>
+
+                <div class="task-list" id="task-list"></div>
+            </section>
+
+            <aside class="panel details" aria-labelledby="details-title">
+                <h2 id="details-title" tabindex="-1">Task details</h2>
+                <div id="details-content"></div>
+            </aside>
+
+        </div>
+
+    </main>
+
+    <dialog class="dialog" id="task-dialog" aria-labelledby="task-dialog-title">
+        <form class="dialog__form" id="task-form">
+            <h2 id="task-dialog-title">New task</h2>
+            <p class="hint">Fields marked with * are required.</p>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label for="form-project">Project *</label>
+                    <select id="form-project" name="project" required></select>
+                </div>
+
+                <div class="field">
+                    <label for="form-type">Task type *</label>
+                    <select id="form-type" name="type" required></select>
+                </div>
+
+                <div class="field field--wide">
+                    <label for="form-title">Title *</label>
+                    <input type="text" id="form-title" name="title" placeholder="Example: Build the search page" minlength="3" maxlength="80" autocomplete="off" required>
+                </div>
+
+                <div class="field field--wide">
+                    <label for="form-description">Description</label>
+                    <textarea id="form-description" name="description" rows="3" placeholder="What needs to be done?" maxlength="300"></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="form-priority">Priority *</label>
+                    <select id="form-priority" name="priority" required></select>
+                </div>
+
+                <div class="field">
+                    <label for="form-due">Due date *</label>
+                    <input type="date" id="form-due" name="dueDate" required>
+                </div>
+
+                <div class="field">
+                    <label for="form-hours">Estimated hours *</label>
+                    <input type="number" id="form-hours" name="estimatedHours" min="0.5" max="200" step="0.5" value="1" required>
+                </div>
+
+                <div class="field" id="detail-field" hidden>
+                    <label for="form-detail" id="detail-label">Detail</label>
+                    <input type="text" id="form-detail" name="detail" maxlength="60" autocomplete="off">
+                </div>
+
+                <fieldset class="field field--wide" id="assignee-fieldset">
+                    <legend>Assign people</legend>
+                    <div class="check-list" id="assignee-options"></div>
+                </fieldset>
+            </div>
+
+            <p class="form-error" id="form-error" role="alert"></p>
+
+            <div class="button-row">
+                <button class="btn" type="submit" id="form-submit">Add task</button>
+                <button class="btn btn--secondary" type="button" id="form-cancel">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog class="dialog" id="delete-dialog" aria-labelledby="delete-title">
+        <div class="dialog__form">
+            <h2 id="delete-title">Delete task</h2>
+            <p>Do you want to delete <strong id="delete-name"></strong>? Reloading the page brings the sample data back.</p>
+
+            <div class="button-row">
+                <button class="btn btn--danger" type="button" id="delete-confirm">Delete task</button>
+                <button class="btn btn--secondary" type="button" id="delete-cancel">Cancel</button>
+            </div>
+        </div>
+    </dialog>
+
+    <div class="toast-area" id="toast-area" role="status"></div>
+
+    <noscript>
+        <p class="alert">This page needs JavaScript to run.</p>
+    </noscript>
+
+    <footer class="site-footer">
+        <p><small>&copy; 2026 Touseef Ahmed</small></p>
+    </footer>
+</body>
+
+</html>
