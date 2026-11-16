@@ -36,4 +36,4 @@ Open `index.html` using a local development server such as VS Code **Live Server
 - **Module and Singleton (`js/app.js`)**: ES modules isolate scope, and a single `ProjectService` instance coordinates application state.
 
 ### 6. Explicit Function Binding (`bind`)
-- UI controller classes (`AppController`, `FilterPanel`, `DetailsPanel`, `TaskDialog`, `DeleteDialog`) bind their methods to `this` inside their constructors (`this.render = this.render.bind(this)`). Without `bind()`, callbacks passed to DOM listeners or child components would lose their class instance context and fail when accessing private fields.
+- UI controller classes (`AppController`, `FilterPanel`, `DetailsPanel`, `TaskDialog`, `DeleteDialog`) bind their methods to `this` inside their constructors (`this.render = this.render.bind(this)`). Without `bind()`, callbacks passed to DOM listeners or child components would lose their class instance context and fail when accessing private fields
